@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+
+  # ======= MySQL Database =======
+  db:
+    image: mysql:8.0
+    container_name: gestion-stock-db
+    environment:
+      MYSQL_DATABASE: gestion_stock_pme
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      MYSQL_USER: ${DB_USERNAME:-pmeuser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-pmepass}
+    ports:
+      - "3307:3306"   # port 3307 pour ne pas confliter avec WAMP
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pme-network
+
+  # ======= Spring Boot App =======
+  app:
+    build: .
+    container_name: gestion-stock-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://db:3306/gestion_stock_pme?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Paris
+      DB_USERNAME: ${DB_USERNAME:-pmeuser}
+      DB_PASSWORD: ${DB_PASSWORD:-pmepass}
+    ports:
+      - "8080:8080"
+    networks:
+      - pme-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    name: gestion_stock_mysql_data
+
+networks:
+  pme-network:
+    name: gestion-stock-network

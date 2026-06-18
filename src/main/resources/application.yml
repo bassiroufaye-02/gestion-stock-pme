@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gestion-stock-pme
+  profiles:
+    active: dev
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 20
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# ======= JWT CONFIG =======
+app:
+  jwt:
+    secret: 3f8d2a1b9c4e7f0a2b5d8e1f4c7a0b3d6e9f2a5c8b1d4e7a0f3b6c9e2d5a8f1b
+    expiration-ms: 900000        # 15 minutes - Access Token
+    refresh-expiration-ms: 604800000  # 7 jours  - Refresh Token
+
+# ======= SWAGGER =======
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  default-produces-media-type: application/json
+
+# ======= ACTUATOR =======
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Gestion Stock PME
+    version: 1.0.0
+    description: Plateforme de gestion de stock et commandes
