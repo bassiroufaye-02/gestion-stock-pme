@@ -112,6 +112,21 @@ public class FournisseurServiceImpl implements FournisseurService {
         log.info("Fournisseur désactivé : {} - {}", fournisseur.getCode(), fournisseur.getRaisonSociale());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FournisseurResponse> rechercherTous(String search, Pageable pageable) {
+        return fournisseurRepository.rechercherIncluantInactifs(search, pageable)
+                .map(fournisseurMapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public FournisseurResponse reactiver(Long id) {
+        Fournisseur fournisseur = trouverOuException(id);
+        fournisseur.setActif(true);
+        return fournisseurMapper.toResponse(fournisseurRepository.save(fournisseur));
+    }
+
     private Fournisseur trouverOuException(Long id) {
         return fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur", id));

@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @Import({JpaAuditingConfig.class, AuditorAwareImpl.class})
+@org.springframework.test.context.ContextConfiguration(classes = com.pme.stock.GestionStockPmeApplication.class)
 @ActiveProfiles("test")
 @DisplayName("ProduitRepository - Tests JPA")
 class ProduitRepositoryTest {

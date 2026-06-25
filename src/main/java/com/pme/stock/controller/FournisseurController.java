@@ -145,4 +145,37 @@ public class FournisseurController {
         fournisseurService.desactiver(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/tous", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Rechercher tous les fournisseurs (actifs et inactifs)",
+               description = "Inclut les fournisseurs désactivés, contrairement à GET /fournisseurs (actifs uniquement).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Résultats de recherche paginés"),
+            @ApiResponse(responseCode = "401", description = "Non authentifié",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+    })
+    public ResponseEntity<PageResponse<FournisseurResponse>> rechercherTous(
+            @Parameter(description = "Terme de recherche", example = "FOUR-001")
+            @RequestParam("q") String search,
+            @PageableDefault(size = 20, sort = DEFAULT_FOURNISSEUR_SORT, direction = Sort.Direction.ASC) Pageable pageable) {
+        Pageable safePageable = PageableUtils.sanitize(pageable, DEFAULT_FOURNISSEUR_SORT, PageableUtils.FOURNISSEUR_SORT_FIELDS);
+        return ResponseEntity.ok(PageResponse.from(fournisseurService.rechercherTous(search, safePageable)));
+    }
+
+    @PostMapping(value = "/{id}/reactiver", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Réactiver un fournisseur désactivé")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Fournisseur réactivé",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = FournisseurResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Fournisseur introuvable",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
+            @ApiResponse(responseCode = "403", description = "Rôle ADMIN requis",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+    })
+    public ResponseEntity<FournisseurResponse> reactiver(@PathVariable Long id) {
+        return ResponseEntity.ok(fournisseurService.reactiver(id));
+    }
 }

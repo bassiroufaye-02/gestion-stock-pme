@@ -12,4 +12,7 @@ public interface ClientService {
     ClientResponse modifier(Long id, ClientRequest request);
     void desactiver(Long id);
     Page<ClientResponse> rechercher(String search, Pageable pageable);
+    Page<ClientResponse> listerTous(Pageable pageable);
+    Page<ClientResponse> rechercherTous(String search, Pageable pageable);
+    ClientResponse reactiver(Long id);
 }

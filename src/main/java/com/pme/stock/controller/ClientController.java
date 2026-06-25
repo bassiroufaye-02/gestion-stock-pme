@@ -133,5 +133,35 @@ public class ClientController {
         clientService.desactiver(id);
         return ResponseEntity.noContent().build();
     }
-}
-
+
+    @GetMapping(value = "/tous", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Lister tous les clients (actifs et inactifs)",
+               description = "Inclut les clients désactivés, contrairement à GET /clients qui ne montre que les actifs.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Liste paginée de tous les clients"),
+            @ApiResponse(responseCode = "401", description = "Non authentifié",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+    })
+    public ResponseEntity<PageResponse<ClientResponse>> listerTous(
+            @PageableDefault(size = 20, sort = DEFAULT_CLIENT_SORT, direction = Sort.Direction.ASC) Pageable pageable) {
+        Pageable safePageable = PageableUtils.sanitize(pageable, DEFAULT_CLIENT_SORT, PageableUtils.CLIENT_SORT_FIELDS);
+        return ResponseEntity.ok(PageResponse.from(clientService.listerTous(safePageable)));
+    }
+
+    @PostMapping(value = "/{id}/reactiver", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
+    @Operation(summary = "Réactiver un client désactivé")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Client réactivé",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ClientResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Client introuvable",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
+            @ApiResponse(responseCode = "403", description = "Rôle ADMIN ou GESTIONNAIRE requis",
+                    content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+    })
+    public ResponseEntity<ClientResponse> reactiver(@PathVariable Long id) {
+        return ResponseEntity.ok(clientService.reactiver(id));
+    }
+}

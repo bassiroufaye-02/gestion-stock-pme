@@ -27,4 +27,13 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             value = "SELECT c FROM Client c WHERE c.actif = true AND (LOWER(c.code) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.raisonSociale) LIKE LOWER(CONCAT('%', :search, '%')))",
             countQuery = "SELECT COUNT(c) FROM Client c WHERE c.actif = true AND (LOWER(c.code) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.raisonSociale) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Client> rechercher(@Param("search") String search, Pageable pageable);
+
+    @Query("SELECT c FROM Client c")
+    Page<Client> findAllIncludingInactifs(Pageable pageable);
+
+    @Query(value = "SELECT c FROM Client c WHERE LOWER(c.code) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                   "OR LOWER(c.raisonSociale) LIKE LOWER(CONCAT('%', :search, '%'))",
+           countQuery = "SELECT COUNT(c) FROM Client c WHERE LOWER(c.code) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                        "OR LOWER(c.raisonSociale) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Client> rechercherIncluantInactifs(@Param("search") String search, Pageable pageable);
 }

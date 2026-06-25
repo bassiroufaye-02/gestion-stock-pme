@@ -15,4 +15,6 @@ public interface FournisseurService {
     List<FournisseurResponse> listerActifs();
     Page<FournisseurResponse> rechercher(String search, Pageable pageable);
     void desactiver(Long id);
+    Page<FournisseurResponse> rechercherTous(String search, Pageable pageable);
+    FournisseurResponse reactiver(Long id);
 }

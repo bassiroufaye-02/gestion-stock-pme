@@ -27,4 +27,9 @@ public interface FournisseurRepository extends JpaRepository<Fournisseur, Long> 
            "(LOWER(f.raisonSociale) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(f.code) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Fournisseur> rechercher(@Param("search") String search, Pageable pageable);
+
+    @Query("SELECT f FROM Fournisseur f WHERE " +
+           "(LOWER(f.raisonSociale) LIKE LOWER(CONCAT('%',:search,'%')) OR " +
+            "LOWER(f.code) LIKE LOWER(CONCAT('%',:search,'%')))")
+    Page<Fournisseur> rechercherIncluantInactifs(@Param("search") String search, Pageable pageable);
 }

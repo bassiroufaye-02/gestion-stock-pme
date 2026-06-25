@@ -92,6 +92,27 @@ public class ClientServiceImpl implements ClientService {
         log.info("Client désactivé : {} - {}", client.getCode(), client.getRaisonSociale());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ClientResponse> listerTous(Pageable pageable) {
+        return clientRepository.findAllIncludingInactifs(pageable).map(clientMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ClientResponse> rechercherTous(String search, Pageable pageable) {
+        return clientRepository.rechercherIncluantInactifs(search, pageable).map(clientMapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public ClientResponse reactiver(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + id));
+        client.setActif(true);
+        return clientMapper.toResponse(clientRepository.save(client));
+    }
+
     private void mapToEntity(ClientRequest request, Client client) {
         client.setCode(request.getCode());
         client.setRaisonSociale(request.getRaisonSociale());

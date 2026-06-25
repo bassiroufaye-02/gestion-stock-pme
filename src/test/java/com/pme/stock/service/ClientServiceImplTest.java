@@ -17,7 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -271,6 +276,127 @@ class ClientServiceImplTest {
 
             // WHEN / THEN
             assertThatThrownBy(() -> clientService.desactiver(999L))
+                    .isInstanceOf(ResourceNotFoundException.class);
+            then(clientRepository).should(never()).save(any());
+        }
+    }
+
+    // =====================================================================
+    // Tests de lister tous
+    // =====================================================================
+
+    @Nested
+    @DisplayName("listerTous()")
+    class ListerTousTests {
+
+        @Test
+        @DisplayName("✅ cas nominal — retourne tous les clients actifs et inactifs")
+        void listerTous_casNominal_doitRetournerTousLesClients() {
+            // GIVEN
+            Client clientInactif = new Client();
+            clientInactif.setId(2L);
+            clientInactif.setCode("CLI-002");
+            clientInactif.setRaisonSociale("Inactive Client");
+            clientInactif.setActif(false);
+
+            Page<Client> page = new PageImpl<>(List.of(clientExistant, clientInactif));
+            given(clientRepository.findAllIncludingInactifs(PageRequest.of(0, 20))).willReturn(page);
+            given(clientMapper.toResponse(any(Client.class))).willReturn(clientResponse);
+
+            // WHEN
+            var result = clientService.listerTous(PageRequest.of(0, 20));
+
+            // THEN
+            assertThat(result).isNotNull();
+            assertThat(result.getTotalElements()).isEqualTo(2);
+            then(clientRepository).should(times(1)).findAllIncludingInactifs(PageRequest.of(0, 20));
+        }
+    }
+
+    // =====================================================================
+    // Tests de rechercher tous
+    // =====================================================================
+
+    @Nested
+    @DisplayName("rechercherTous()")
+    class RechercherTousTests {
+
+        @Test
+        @DisplayName("✅ cas nominal — recherche tous les clients actifs et inactifs")
+        void rechercherTous_casNominal_doitRetournerResultats() {
+            // GIVEN
+            Client clientInactif = new Client();
+            clientInactif.setId(2L);
+            clientInactif.setCode("CLI-002");
+            clientInactif.setRaisonSociale("Inactive ACME");
+            clientInactif.setActif(false);
+
+            Page<Client> page = new PageImpl<>(List.of(clientExistant, clientInactif));
+            given(clientRepository.rechercherIncluantInactifs("ACME", PageRequest.of(0, 20))).willReturn(page);
+            given(clientMapper.toResponse(any(Client.class))).willReturn(clientResponse);
+
+            // WHEN
+            var result = clientService.rechercherTous("ACME", PageRequest.of(0, 20));
+
+            // THEN
+            assertThat(result).isNotNull();
+            assertThat(result.getTotalElements()).isEqualTo(2);
+            then(clientRepository).should(times(1)).rechercherIncluantInactifs("ACME", PageRequest.of(0, 20));
+        }
+    }
+
+    // =====================================================================
+    // Tests de réactivation
+    // =====================================================================
+
+    @Nested
+    @DisplayName("reactiver()")
+    class ReactiverTests {
+
+        @Test
+        @DisplayName("✅ cas nominal — actif = true puis sauvegardé")
+        void reactiver_casNominal_doitSetActifTrue() {
+            // GIVEN
+            clientExistant.setActif(false);
+            given(clientRepository.findById(1L)).willReturn(Optional.of(clientExistant));
+            given(clientRepository.save(any(Client.class))).willReturn(clientExistant);
+            given(clientMapper.toResponse(clientExistant)).willReturn(clientResponse);
+
+            // WHEN
+            ClientResponse response = clientService.reactiver(1L);
+
+            // THEN
+            assertThat(response).isNotNull();
+            assertThat(clientExistant.getActif()).isTrue();
+            then(clientRepository).should(times(1)).save(argThat(c -> c.getActif()));
+        }
+
+        @Test
+        @DisplayName("✅ déjà actif — no-op silencieux, retourne response")
+        void reactiver_dejaActif_noOpSilencieux() {
+            // GIVEN
+            clientExistant.setActif(true);
+            given(clientRepository.findById(1L)).willReturn(Optional.of(clientExistant));
+            given(clientRepository.save(any(Client.class))).willReturn(clientExistant);
+            given(clientMapper.toResponse(clientExistant)).willReturn(clientResponse);
+
+            // WHEN
+            ClientResponse response = clientService.reactiver(1L);
+
+            // THEN
+            assertThat(response).isNotNull();
+            assertThat(response.getActif()).isTrue();
+            then(clientRepository).should(times(1)).save(clientExistant);
+        }
+
+        @Test
+        @DisplayName("❌ id inexistant — doit lever ResourceNotFoundException")
+        void reactiver_idInexistant_doitLeverResourceNotFoundException() {
+            // GIVEN
+            given(clientRepository.findById(999L)).willReturn(Optional.empty());
+
+            // WHEN / THEN
+            assertThatThrownBy(() -> clientService.reactiver(999L))
                     .isInstanceOf(ResourceNotFoundException.class);
             then(clientRepository).should(never()).save(any());
         }
