@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+// Représente un enregistrement de stock : entrée, sortie ou ajustement pour tracer les variations.
 @Entity
 @Table(name = "mouvements_stock")
 @EntityListeners(AuditingEntityListener.class)

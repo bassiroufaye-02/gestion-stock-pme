@@ -42,6 +42,7 @@ public class SecurityConfig {
     };
 
     @Bean
+    // Permet de configurer securityFilterChain.
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> {})
@@ -62,6 +63,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    // Permet de configurer authenticationProvider.
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
@@ -70,11 +72,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    // Permet de configurer authenticationManager.
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
+    // Permet de configurer passwordEncoder.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }

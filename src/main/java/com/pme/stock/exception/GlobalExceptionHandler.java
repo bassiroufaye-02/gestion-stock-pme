@@ -27,6 +27,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
+    // Permet de traiter handleNotFound.
     public ResponseEntity<ProblemDetail> handleNotFound(ResourceNotFoundException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         pd.setTitle("Ressource introuvable");
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
+    // Permet de traiter handleBusiness.
     public ResponseEntity<ProblemDetail> handleBusiness(BusinessException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         pd.setTitle("Erreur métier");
@@ -45,6 +47,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    // Permet de traiter handleValidation.
     public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
+    // Permet de traiter handleAccessDenied.
     public ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Accès refusé : privilèges insuffisants");
         pd.setTitle("Accès refusé");
@@ -69,6 +73,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
+    // Permet de traiter handleBadCredentials.
     public ResponseEntity<ProblemDetail> handleBadCredentials(BadCredentialsException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect");
         pd.setTitle("Identifiants invalides");
@@ -78,6 +83,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
+    // Permet de traiter handleAuthentication.
     public ResponseEntity<ProblemDetail> handleAuthentication(AuthenticationException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Authentification requise");
         pd.setTitle("Non authentifié");
@@ -87,6 +93,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({PropertyReferenceException.class, InvalidDataAccessApiUsageException.class})
+    // Permet de traiter handleInvalidPageable.
     public ResponseEntity<ProblemDetail> handleInvalidPageable(Exception ex) {
         String detail = "Paramètre de pagination invalide";
         if (ex instanceof PropertyReferenceException pre) {
@@ -103,6 +110,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
+    // Permet de traiter handleUnreadableBody.
     public ResponseEntity<ProblemDetail> handleUnreadableBody(HttpMessageNotReadableException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST, "Corps de requête JSON manquant ou mal formé");
@@ -113,6 +121,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
+    // Permet de traiter handleNoResourceFound.
     public ResponseEntity<ProblemDetail> handleNoResourceFound(NoResourceFoundException ex) {
         log.warn("Ressource non trouvée : {}", ex.getMessage());
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Ressource non trouvée");
@@ -123,6 +132,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
+    // Permet de traiter handleGeneric.
     public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
         log.error("Erreur inattendue", ex);
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Une erreur interne s'est produite");
@@ -134,6 +144,7 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, pd);
     }
 
+    // Permet de traiter problem.
     private ResponseEntity<ProblemDetail> problem(HttpStatus status, ProblemDetail body) {
         return ResponseEntity.status(status)
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)

@@ -30,6 +30,7 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional
+    // Permet de cr?er creer.
     public ProduitResponse creer(ProduitRequest request) {
         if (produitRepository.existsByReference(request.getReference())) {
             throw new BusinessException("Un produit avec la référence '" + request.getReference() + "' existe déjà");
@@ -42,6 +43,7 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional
+    // Permet de modifier modifier.
     public ProduitResponse modifier(Long id, ProduitRequest request) {
         Produit produit = trouverProduitOuException(id);
 
@@ -57,12 +59,14 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public ProduitResponse trouverParId(Long id) {
         return produitMapper.toResponse(trouverProduitOuException(id));
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParReference.
     public ProduitResponse trouverParReference(String reference) {
         Produit produit = produitRepository.findByReference(reference)
                 .orElseThrow(() -> new ResourceNotFoundException("Produit introuvable avec la référence : " + reference));
@@ -71,24 +75,28 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerTous.
     public Page<ProduitResponse> listerTous(Pageable pageable) {
         return produitRepository.findAll(pageable).map(produitMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercher.
     public Page<ProduitResponse> rechercher(String search, Pageable pageable) {
         return produitRepository.rechercherProduits(search, pageable).map(produitMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerParCategorie.
     public Page<ProduitResponse> listerParCategorie(Long categorieId, Pageable pageable) {
         return produitRepository.findByCategorieId(categorieId, pageable).map(produitMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerProduitsEnAlerte.
     public List<ProduitResponse> listerProduitsEnAlerte() {
         return produitRepository.findProduitsEnAlerte().stream()
                 .map(produitMapper::toResponse)
@@ -97,6 +105,7 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional
+    // Permet de supprimer desactiver.
     public void desactiver(Long id) {
         Produit produit = trouverProduitOuException(id);
         produit.setActif(false);
@@ -106,17 +115,20 @@ public class ProduitServiceImpl implements ProduitService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter compterProduitsEnAlerte.
     public long compterProduitsEnAlerte() {
         return produitRepository.countProduitsEnAlerte();
     }
 
     // === Méthodes privées ===
 
+    // Permet de traiter trouverProduitOuException.
     private Produit trouverProduitOuException(Long id) {
         return produitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produit", id));
     }
 
+    // Permet de traiter mapperVersProduit.
     private Produit mapperVersProduit(ProduitRequest request, Produit produit) {
         produit.setReference(request.getReference());
         produit.setDesignation(request.getDesignation());

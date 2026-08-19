@@ -24,11 +24,13 @@ public final class PageableUtils {
     private PageableUtils() {
     }
 
+    // Permet de traiter sanitize.
     public static Pageable sanitize(Pageable pageable, String defaultSortField, Set<String> allowedFields) {
         Sort sort = sanitizeSort(pageable.getSort(), defaultSortField, allowedFields);
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
+    // Permet de traiter sanitizeSort.
     private static Sort sanitizeSort(Sort sort, String defaultSortField, Set<String> allowedFields) {
         if (sort.isUnsorted()) {
             return Sort.by(defaultSortField).ascending();

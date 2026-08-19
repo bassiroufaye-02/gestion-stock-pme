@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+// Représente une ligne d'une commande fournisseur avec le produit, la quantité et le prix d'achat.
 @Entity
 @Table(name = "lignes_commandes_fournisseurs")
 @Getter
@@ -42,6 +43,7 @@ public class LigneCommandeFournisseur {
     @JsonIgnore
     private Produit produit;
 
+    // Permet de calculer le montant HT d'une ligne selon le prix d'achat et la quantité demandée.
     public void calculerMontantLigneHT() {
         if (this.prixUnitaireAchat != null && this.quantiteCommandee != null) {
             this.montantLigneHT = this.prixUnitaireAchat
@@ -49,6 +51,7 @@ public class LigneCommandeFournisseur {
         }
     }
 
+    // Permet de vérifier si toute la quantité commandée a bien été livrée.
     public boolean estTotalementRecue() {
         return this.quantiteRecue >= this.quantiteCommandee;
     }

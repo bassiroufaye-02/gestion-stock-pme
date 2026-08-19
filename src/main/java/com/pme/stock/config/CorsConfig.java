@@ -12,6 +12,7 @@ import java.util.List;
 public class CorsConfig {
 
     @Bean
+    // Permet de configurer corsConfigurationSource.
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(

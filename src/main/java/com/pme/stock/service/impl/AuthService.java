@@ -47,6 +47,7 @@ public class AuthService {
     private long refreshExpirationMs;
 
     @Transactional
+    // Permet de g?rer inscrire.
     public AuthResponse inscrire(InscriptionRequest request) {
         if (utilisateurRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("Un compte existe déjà avec l'email : " + request.getEmail());
@@ -77,6 +78,7 @@ public class AuthService {
     }
 
     @Transactional
+    // Permet de g?rer connecter.
     public AuthResponse connecter(ConnexionRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getMotDePasse())
@@ -93,6 +95,7 @@ public class AuthService {
     }
 
     @Transactional
+    // Permet de g?rer rafraichirToken.
     public AuthResponse rafraichirToken(String refreshTokenStr) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenStr)
                 .orElseThrow(() -> new BusinessException("Refresh token invalide ou introuvable"));
@@ -109,6 +112,7 @@ public class AuthService {
     }
 
     @Transactional
+    // Permet de g?rer deconnecter.
     public void deconnecter(String email) {
         utilisateurRepository.findByEmail(email).ifPresent(u -> {
             refreshTokenRepository.deleteByUtilisateur(u);
@@ -116,6 +120,7 @@ public class AuthService {
         });
     }
 
+    // Permet de g?n?rer genererAuthResponse.
     private AuthResponse genererAuthResponse(Utilisateur utilisateur) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(utilisateur.getEmail());
         String accessToken = jwtService.genererToken(userDetails);

@@ -25,6 +25,7 @@ public class MouvementStockResponse {
     private LocalDateTime createdAt;
     private String createdBy;
 
+    // Permet de traiter fromEntity.
     public static MouvementStockResponse fromEntity(MouvementStock mouvement) {
         return MouvementStockResponse.builder()
                 .id(mouvement.getId())

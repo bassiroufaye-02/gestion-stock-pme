@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+// Base commune à toutes les entités pour tracer les dates et l’auteur des modifications.
 @Getter
 @Setter
 @MappedSuperclass

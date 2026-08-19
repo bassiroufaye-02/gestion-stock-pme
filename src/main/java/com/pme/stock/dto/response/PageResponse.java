@@ -20,6 +20,7 @@ public class PageResponse<T> {
     boolean first;
     boolean last;
 
+    // Permet de traiter from.
     public static <T> PageResponse<T> from(Page<T> page) {
         return PageResponse.<T>builder()
                 .content(page.getContent())

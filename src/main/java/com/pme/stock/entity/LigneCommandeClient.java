@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+// Représente une ligne d'une commande client avec le produit, la quantité et le montant associé.
 @Entity
 @Table(name = "lignes_commandes_clients")
 @Getter
@@ -36,6 +37,7 @@ public class LigneCommandeClient {
     @JsonIgnore
     private Produit produit;
 
+    // Permet de calculer le montant HT d'une ligne selon la quantité et le prix unitaire.
     public void calculerMontantLigneHT() {
         if (this.quantite != null && this.prixUnitaireHT != null) {
             this.montantLigneHT = this.prixUnitaireHT.multiply(BigDecimal.valueOf(this.quantite));
@@ -47,6 +49,7 @@ public class LigneCommandeClient {
     @PrePersist
     @PreUpdate
     @PostLoad
+    // Permet de synchroniser automatiquement le montant d'une ligne avant sauvegarde ou chargement.
     private void synchroniserMontantLigneHT() {
         calculerMontantLigneHT();
     }

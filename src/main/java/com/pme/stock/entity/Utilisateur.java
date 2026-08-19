@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+// Représente un utilisateur du système, avec ses identifiants, ses rôles et son état actif.
 @Entity
 @Table(name = "utilisateurs")
 @Getter
@@ -44,10 +45,12 @@ public class Utilisateur extends BaseEntity {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    // Permet d'associer un rôle à l'utilisateur pour gérer ses droits d'accès.
     public void ajouterRole(Role role) {
         this.roles.add(role);
     }
 
+    // Permet de vérifier si l'utilisateur est actif et peut se connecter au système.
     public boolean isActif() {
         return Boolean.TRUE.equals(this.actif);
     }

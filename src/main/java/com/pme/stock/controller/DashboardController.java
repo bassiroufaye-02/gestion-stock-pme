@@ -31,6 +31,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
+    // Permet d'obtenir en un seul appel le résumé complet de l'activité commerciale pour piloter la PME.
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Récupérer le snapshot complet du tableau de bord",
@@ -41,6 +42,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.genererDashboard());
     }
 
+    // Permet d'évaluer rapidement la valeur du stock pour mieux piloter les coûts et la trésorerie.
     @GetMapping("/stock/valeur")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Valeur totale du stock",
@@ -50,6 +52,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.calculerValeurStock());
     }
 
+    // Permet de mesurer l'état des commandes par statut pour savoir où se situe la charge opérationnelle.
     @GetMapping("/commandes/stats")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Statistiques des commandes par statut",
@@ -59,6 +62,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.statistiquesCommandesParStatut());
     }
 
+    // Permet d'identifier les produits les plus demandés pour ajuster le stock et les achats.
     @GetMapping("/produits/top")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Top produits les plus commandés",
@@ -70,6 +74,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.topProduitsVendus(limite));
     }
 
+    // Permet de calculer le chiffre d'affaires d'un mois donné pour suivre la performance commerciale.
     @GetMapping("/ca/mensuel")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Chiffre d'affaires d'un mois donné",

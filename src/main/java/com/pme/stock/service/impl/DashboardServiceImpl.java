@@ -41,6 +41,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter calculerValeurStock.
     public StockValeurResponse calculerValeurStock() {
         BigDecimal valeurAchat = produitRepository.sumValeurStockAchat();
         BigDecimal valeurVente = produitRepository.sumValeurStockVente();
@@ -55,6 +56,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter statistiquesCommandesParStatut.
     public List<CommandeStatutStatResponse> statistiquesCommandesParStatut() {
         List<Object[]> resultats = commandeClientRepository.statistiquesParStatut();
         return resultats.stream()
@@ -68,6 +70,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de convertir topProduitsVendus.
     public List<ProduitTopVenteResponse> topProduitsVendus(int limite) {
         if (limite <= 0) {
             return List.of();
@@ -87,6 +90,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter chiffreAffairesMois.
     public ChiffreAffairesMoisResponse chiffreAffairesMois(int annee, int mois) {
         BigDecimal ca = commandeClientRepository.sumChiffreAffairesMois(annee, mois);
         long nb = commandeClientRepository.countCommandesLivreesMois(annee, mois);
@@ -100,6 +104,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de g?n?rer genererDashboard.
     public DashboardResponse genererDashboard() {
         LocalDate maintenant = LocalDate.now();
         List<ProduitResponse> produitsEnAlerte = produitRepository.findProduitsEnAlerte()

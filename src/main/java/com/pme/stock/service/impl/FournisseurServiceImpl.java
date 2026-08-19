@@ -27,6 +27,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional
+    // Permet de cr?er creer.
     public FournisseurResponse creer(FournisseurRequest request) {
         String code = request.getCode().toUpperCase().trim();
         if (fournisseurRepository.existsByCode(code)) {
@@ -47,6 +48,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional
+    // Permet de modifier modifier.
     public FournisseurResponse modifier(Long id, FournisseurRequest request) {
         Fournisseur fournisseur = trouverOuException(id);
         String code = request.getCode().toUpperCase().trim();
@@ -73,12 +75,14 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public FournisseurResponse trouverParId(Long id) {
         return fournisseurMapper.toResponse(trouverOuException(id));
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParCode.
     public FournisseurResponse trouverParCode(String code) {
         Fournisseur fournisseur = fournisseurRepository.findByCode(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur avec code " + code));
@@ -87,6 +91,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerActifs.
     public List<FournisseurResponse> listerActifs() {
         return fournisseurRepository.findAllByActifTrue().stream()
                 .map(fournisseurMapper::toResponse)
@@ -95,6 +100,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercher.
     public Page<FournisseurResponse> rechercher(String search, Pageable pageable) {
         return fournisseurRepository.rechercher(search, pageable)
                 .map(fournisseurMapper::toResponse);
@@ -102,6 +108,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional
+    // Permet de supprimer desactiver.
     public void desactiver(Long id) {
         Fournisseur fournisseur = trouverOuException(id);
         if (fournisseurRepository.hasCommandesEnCours(id)) {
@@ -114,6 +121,7 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercherTous.
     public Page<FournisseurResponse> rechercherTous(String search, Pageable pageable) {
         return fournisseurRepository.rechercherIncluantInactifs(search, pageable)
                 .map(fournisseurMapper::toResponse);
@@ -121,12 +129,14 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional
+    // Permet de traiter reactiver.
     public FournisseurResponse reactiver(Long id) {
         Fournisseur fournisseur = trouverOuException(id);
         fournisseur.setActif(true);
         return fournisseurMapper.toResponse(fournisseurRepository.save(fournisseur));
     }
 
+    // Permet de traiter trouverOuException.
     private Fournisseur trouverOuException(Long id) {
         return fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur", id));

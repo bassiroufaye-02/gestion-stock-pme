@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+// Représente un client avec ses coordonnées et son historique de commandes.
 @Entity
 @Table(name = "clients")
 @Getter

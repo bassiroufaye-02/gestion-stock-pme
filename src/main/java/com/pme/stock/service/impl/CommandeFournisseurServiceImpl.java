@@ -36,6 +36,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de cr?er creer.
     public CommandeFournisseurResponse creer(CommandeFournisseurRequest request) {
         Fournisseur fournisseur = fournisseurRepository.findById(request.getFournisseurId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur", request.getFournisseurId()));
@@ -86,6 +87,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de traiter envoyer.
     public CommandeFournisseurResponse envoyer(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", id));
@@ -102,6 +104,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de traiter receptionner.
     public CommandeFournisseurResponse receptionner(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", id));
@@ -154,6 +157,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de supprimer annuler.
     public CommandeFournisseurResponse annuler(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", id));
@@ -170,6 +174,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de cr?er ajouterLigne.
     public CommandeFournisseurResponse ajouterLigne(Long commandeId, LigneCommandeFournisseurRequest request) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(commandeId)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", commandeId));
@@ -203,6 +208,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional
+    // Permet de supprimer supprimerLigne.
     public CommandeFournisseurResponse supprimerLigne(Long commandeId, Long ligneId) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(commandeId)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", commandeId));
@@ -225,6 +231,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public CommandeFournisseurResponse trouverParId(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CommandeFournisseur", id));
@@ -233,6 +240,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParNumero.
     public CommandeFournisseurResponse trouverParNumero(String numero) {
         CommandeFournisseur commande = commandeFournisseurRepository.findByNumeroCommande(numero)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande fournisseur avec numéro " + numero));
@@ -241,6 +249,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerToutes.
     public Page<CommandeFournisseurResponse> listerToutes(Pageable pageable) {
         return commandeFournisseurRepository.findAllWithFournisseur(pageable)
                 .map(commandeFournisseurMapper::toResponse);
@@ -248,6 +257,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerParFournisseur.
     public Page<CommandeFournisseurResponse> listerParFournisseur(Long fournisseurId, Pageable pageable) {
         return commandeFournisseurRepository.findByFournisseurId(fournisseurId, pageable)
                 .map(commandeFournisseurMapper::toResponse);
@@ -255,11 +265,13 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerParStatut.
     public Page<CommandeFournisseurResponse> listerParStatut(StatutCommandeFournisseur statut, Pageable pageable) {
         return commandeFournisseurRepository.findByStatut(statut, pageable)
                 .map(commandeFournisseurMapper::toResponse);
     }
 
+    // Permet de g?n?rer genererNumeroCommande.
     private String genererNumeroCommande() {
         int year = LocalDate.now().getYear();
         String prefixe = "CF-" + year + "-";
@@ -268,6 +280,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
         return prefixe + String.format("%05d", seq);
     }
 
+    // Permet de r?cup?rer UtilisateurConnecte.
     private Utilisateur getUtilisateurConnecte() {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();

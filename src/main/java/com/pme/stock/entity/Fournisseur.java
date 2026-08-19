@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Représente un fournisseur partenaire pour l'approvisionnement et les commandes d'achat.
 @Entity
 @Table(name = "fournisseurs")
 @Getter

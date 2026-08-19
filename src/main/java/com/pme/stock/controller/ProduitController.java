@@ -30,6 +30,7 @@ public class ProduitController {
 
     private final ProduitService produitService;
 
+    // Permet d'ajouter un produit au catalogue pour le vendre ou le suivre en stock.
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Créer un nouveau produit")
@@ -40,18 +41,21 @@ public class ProduitController {
         return ResponseEntity.created(location).body(produit);
     }
 
+    // Permet de retrouver un produit exact via son identifiant pour le consulter ou le modifier.
     @GetMapping("/{id}")
     @Operation(summary = "Récupérer un produit par son ID")
     public ResponseEntity<ProduitResponse> trouverParId(@PathVariable Long id) {
         return ResponseEntity.ok(produitService.trouverParId(id));
     }
 
+    // Permet de retrouver un produit par sa référence, utile pour les recherches rapides du stock et des ventes.
     @GetMapping("/reference/{reference}")
     @Operation(summary = "Récupérer un produit par sa référence")
     public ResponseEntity<ProduitResponse> trouverParReference(@PathVariable String reference) {
         return ResponseEntity.ok(produitService.trouverParReference(reference));
     }
 
+    // Permet de lister le catalogue de produits avec pagination pour limiter la taille des réponses.
     @GetMapping
     @Operation(summary = "Lister tous les produits (paginé)")
     public ResponseEntity<Page<ProduitResponse>> listerTous(
@@ -59,6 +63,7 @@ public class ProduitController {
         return ResponseEntity.ok(produitService.listerTous(pageable));
     }
 
+    // Permet de rechercher un produit par son nom ou sa référence pour trouver rapidement un article précis.
     @GetMapping("/recherche")
     @Operation(summary = "Rechercher des produits par désignation ou référence")
     public ResponseEntity<Page<ProduitResponse>> rechercher(
@@ -67,6 +72,7 @@ public class ProduitController {
         return ResponseEntity.ok(produitService.rechercher(q, pageable));
     }
 
+    // Permet de filtrer les produits par catégorie pour gérer les assortiments et les analyses commerciales.
     @GetMapping("/categorie/{categorieId}")
     @Operation(summary = "Lister les produits d'une catégorie")
     public ResponseEntity<Page<ProduitResponse>> listerParCategorie(
@@ -75,18 +81,21 @@ public class ProduitController {
         return ResponseEntity.ok(produitService.listerParCategorie(categorieId, pageable));
     }
 
+    // Permet de voir les produits qui sont proches de l'épuisement pour agir avant la rupture.
     @GetMapping("/alertes")
     @Operation(summary = "Lister les produits en alerte de stock")
     public ResponseEntity<List<ProduitResponse>> listerAlertes() {
         return ResponseEntity.ok(produitService.listerProduitsEnAlerte());
     }
 
+    // Permet d'avoir un compteur rapide des produits en rupture ou en seuil d'alerte.
     @GetMapping("/alertes/count")
     @Operation(summary = "Nombre de produits en alerte de stock")
     public ResponseEntity<Map<String, Long>> compterAlertes() {
         return ResponseEntity.ok(Map.of("count", produitService.compterProduitsEnAlerte()));
     }
 
+    // Permet de modifier les caractéristiques d'un produit déjà enregistré sans le recréer.
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Modifier un produit")
@@ -96,6 +105,7 @@ public class ProduitController {
         return ResponseEntity.ok(produitService.modifier(id, request));
     }
 
+    // Permet de désactiver un produit sans le supprimer pour conserver son historique de ventes et de stock.
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Désactiver un produit (soft delete)")

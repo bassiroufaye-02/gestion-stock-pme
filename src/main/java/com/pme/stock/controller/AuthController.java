@@ -29,24 +29,28 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // Permet de créer un compte utilisateur et de retourner un token d'accès immédiatement.
     @PostMapping("/inscription")
     @Operation(summary = "Créer un nouveau compte utilisateur")
     public ResponseEntity<AuthResponse> inscrire(@Valid @RequestBody InscriptionRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.inscrire(request));
     }
 
+    // Permet à un utilisateur existant de se connecter et de récupérer les JWT pour accéder aux ressources sécurisées.
     @PostMapping("/connexion")
     @Operation(summary = "Se connecter et obtenir les tokens JWT")
     public ResponseEntity<AuthResponse> connecter(@Valid @RequestBody ConnexionRequest request) {
         return ResponseEntity.ok(authService.connecter(request));
     }
 
+    // Permet de renouveler le token d'accès sans obliger l'utilisateur à se reconnecter.
     @PostMapping("/refresh")
     @Operation(summary = "Rafraîchir le token d'accès via le refresh token")
     public ResponseEntity<AuthResponse> rafraichir(@Valid @RequestBody RefreshTokenRequest request) {
         return ResponseEntity.ok(authService.rafraichirToken(request.getRefreshToken()));
     }
 
+    // Permet de fermer la session active en invalidant le refresh token de l'utilisateur authentifié.
     @PostMapping("/deconnexion")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "bearerAuth")

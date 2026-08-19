@@ -23,6 +23,7 @@ public class CategorieService {
     private final CategorieMapper categorieMapper;
 
     @Transactional
+    // Permet de cr?er creer.
     public CategorieResponse creer(CategorieRequest request) {
         if (categorieRepository.existsByCode(request.getCode())) {
             throw new BusinessException("Une catégorie avec le code '" + request.getCode() + "' existe déjà");
@@ -36,6 +37,7 @@ public class CategorieService {
     }
 
     @Transactional
+    // Permet de modifier modifier.
     public CategorieResponse modifier(Long id, CategorieRequest request) {
         Categorie categorie = trouverOuException(id);
         categorie.setLibelle(request.getLibelle());
@@ -44,27 +46,32 @@ public class CategorieService {
     }
 
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public CategorieResponse trouverParId(Long id) {
         return categorieMapper.toResponse(trouverOuException(id));
     }
 
     @Transactional(readOnly = true)
+    // Permet de traiter listerActives.
     public List<CategorieResponse> listerActives() {
         return categorieMapper.toResponseList(categorieRepository.findAllByActifTrue());
     }
 
     @Transactional(readOnly = true)
+    // Permet de traiter listerToutes.
     public List<CategorieResponse> listerToutes() {
         return categorieMapper.toResponseList(categorieRepository.findAll());
     }
 
     @Transactional
+    // Permet de supprimer desactiver.
     public void desactiver(Long id) {
         Categorie categorie = trouverOuException(id);
         categorie.setActif(false);
         categorieRepository.save(categorie);
     }
 
+    // Permet de traiter trouverOuException.
     private Categorie trouverOuException(Long id) {
         return categorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorie", id));

@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Représente une famille de produits pour organiser le catalogue et les achats.
 @Entity
 @Table(name = "categories")
 @Getter

@@ -37,6 +37,7 @@ public class CommandeFournisseurController {
     private static final String DEFAULT_COMMANDE_FOURNISSEUR_SORT = "dateCommande";
     private final CommandeFournisseurService commandeFournisseurService;
 
+    // Permet de lancer une commande fournisseur pour approvisionner le stock à partir d'un fournisseur.
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Créer une nouvelle commande fournisseur")
@@ -56,6 +57,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.created(location).body(result);
     }
 
+    // Permet de consulter une commande fournisseur détaillée pour vérifier les quantités et le fournisseur.
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Récupérer une commande fournisseur par son ID")
@@ -70,6 +72,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.trouverParId(id));
     }
 
+    // Permet de retrouver une commande fournisseur via son numéro pour le suivi administratif.
     @GetMapping(value = "/numero/{numero}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Récupérer une commande fournisseur par son numéro")
@@ -84,6 +87,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.trouverParNumero(numero));
     }
 
+    // Permet d'afficher l'ensemble des commandes fournisseurs avec pagination pour gérer les achats sereinement.
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister toutes les commandes fournisseurs")
@@ -99,6 +103,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(PageResponse.from(commandeFournisseurService.listerToutes(safePageable)));
     }
 
+    // Permet de voir les achats associés à un fournisseur précis pour contrôler les relations fournisseurs.
     @GetMapping(value = "/fournisseur/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister les commandes d'un fournisseur")
@@ -115,6 +120,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(PageResponse.from(commandeFournisseurService.listerParFournisseur(fournisseurId, safePageable)));
     }
 
+    // Permet de filtrer les achats par statut pour suivre leur progression depuis la création jusqu'à la réception.
     @GetMapping(value = "/statut/{statut}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister les commandes par statut")
@@ -131,6 +137,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(PageResponse.from(commandeFournisseurService.listerParStatut(statut, safePageable)));
     }
 
+    // Permet d'envoyer une commande au fournisseur pour confirmer le besoin d'approvisionnement.
     @PostMapping(value = "/{id}/envoyer", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Envoyer une commande au fournisseur")
@@ -147,6 +154,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.envoyer(id));
     }
 
+    // Permet de valider la réception d'une commande fournisseur et d'actualiser le stock.
     @PostMapping(value = "/{id}/receptionner", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Réceptionner une commande fournisseur")
@@ -163,6 +171,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.receptionner(id));
     }
 
+    // Permet d'annuler une commande fournisseur avant sa réception pour éviter un approvisionnement inutile.
     @PostMapping(value = "/{id}/annuler", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Annuler une commande fournisseur")
@@ -179,6 +188,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.annuler(id));
     }
 
+    // Permet d'ajouter un article à une commande fournisseur avant son envoi ou sa réception.
     @PostMapping(value = "/{id}/lignes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Ajouter une ligne à une commande fournisseur")
@@ -197,6 +207,7 @@ public class CommandeFournisseurController {
         return ResponseEntity.ok(commandeFournisseurService.ajouterLigne(id, request));
     }
 
+    // Permet de corriger une commande fournisseur en supprimant une ligne erronée ou non souhaitée.
     @DeleteMapping(value = "/{id}/lignes/{ligneId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Supprimer une ligne d'une commande fournisseur")

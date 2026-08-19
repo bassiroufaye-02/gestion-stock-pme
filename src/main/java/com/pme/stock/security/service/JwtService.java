@@ -28,14 +28,17 @@ public class JwtService {
     @Value("${app.jwt.expiration-ms}")
     private long expirationMs;
 
+    // Permet de r?cup?rer SigningKey.
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    // Permet de g?n?rer genererToken.
     public String genererToken(UserDetails userDetails) {
         return genererToken(new HashMap<>(), userDetails);
     }
 
+    // Permet de g?n?rer genererToken.
     public String genererToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .claims(extraClaims)
@@ -46,20 +49,24 @@ public class JwtService {
                 .compact();
     }
 
+    // Permet de traiter extraireEmail.
     public String extraireEmail(String token) {
         return extraireClaim(token, Claims::getSubject);
     }
 
+    // Permet de traiter extraireClaim.
     public <T> T extraireClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extraireTousClaims(token);
         return claimsResolver.apply(claims);
     }
 
+    // Permet de traiter estValide.
     public boolean estValide(String token, UserDetails userDetails) {
         final String email = extraireEmail(token);
         return email.equals(userDetails.getUsername()) && !estExpire(token);
     }
 
+    // Permet de traiter validerToken.
     public boolean validerToken(String token) {
         try {
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
@@ -78,10 +85,12 @@ public class JwtService {
         return false;
     }
 
+    // Permet de traiter estExpire.
     private boolean estExpire(String token) {
         return extraireClaim(token, Claims::getExpiration).before(new Date());
     }
 
+    // Permet de traiter extraireTousClaims.
     private Claims extraireTousClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())

@@ -30,6 +30,7 @@ public class StockController {
     private final StockService stockService;
     private final MouvementStockMapper mouvementStockMapper;
 
+    // Permet d'enregistrer une entrée, une sortie ou un ajustement de stock pour refléter l'état réel du magasin.
     @PostMapping("/mouvements")
     @Operation(summary = "Enregistrer un mouvement de stock (entrée/sortie/ajustement)")
     public ResponseEntity<MouvementStockResponse> effectuerMouvement(@Valid @RequestBody MouvementStockRequest request) {
@@ -37,6 +38,7 @@ public class StockController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mouvementStockMapper.toResponse(mouvement));
     }
 
+    // Permet de consulter l'historique de stock d'un produit pour suivre ses variations et diagnostiquer les écarts.
     @GetMapping("/mouvements/produit/{produitId}")
     @Operation(summary = "Historique des mouvements d'un produit")
     public ResponseEntity<PageResponse<MouvementStockResponse>> listerMouvements(

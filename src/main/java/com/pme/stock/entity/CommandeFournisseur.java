@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// Représente une commande d'achat fournisseur avec ses lignes, montants et statut approvisionnement.
 @Entity
 @Table(name = "commandes_fournisseurs")
 @Getter
@@ -75,6 +76,7 @@ public class CommandeFournisseur extends BaseEntity {
     @JsonIgnore
     private List<LigneCommandeFournisseur> lignes = new ArrayList<>();
 
+    // Permet de recalculer les montants HT, TVA et TTC à partir des lignes d'achat.
     public void calculerMontants() {
         if (lignes != null) {
             lignes.forEach(LigneCommandeFournisseur::calculerMontantLigneHT);
@@ -89,6 +91,7 @@ public class CommandeFournisseur extends BaseEntity {
     }
 
     @PostLoad
+    // Permet de normaliser les montants après lecture depuis la base pour éviter les valeurs nulles.
     private void normaliserMontantsApresChargement() {
         if (montantHT == null) {
             montantHT = BigDecimal.ZERO;
@@ -104,20 +107,24 @@ public class CommandeFournisseur extends BaseEntity {
         }
     }
 
+    // Permet de vérifier si la commande peut encore être modifiée avant l'envoi au fournisseur.
     public boolean peutEtreModifiee() {
         return this.statut == StatutCommandeFournisseur.BROUILLON;
     }
 
+    // Permet de vérifier si la commande peut être envoyée au fournisseur avec au moins une ligne.
     public boolean peutEtreEnvoyee() {
         return this.statut == StatutCommandeFournisseur.BROUILLON
             && this.lignes != null && !this.lignes.isEmpty();
     }
 
+    // Permet de vérifier si la commande peut être réceptionnée selon son statut actuel.
     public boolean peutEtreReceptionnee() {
         return this.statut == StatutCommandeFournisseur.ENVOYEE
             || this.statut == StatutCommandeFournisseur.RECUE_PARTIELLE;
     }
 
+    // Permet de vérifier si la commande peut être annulée avant ou pendant l'envoi.
     public boolean peutEtreAnnulee() {
         return this.statut == StatutCommandeFournisseur.BROUILLON
             || this.statut == StatutCommandeFournisseur.ENVOYEE;

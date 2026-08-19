@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// Représente une commande client globale, avec ses lignes, montants et statut de traitement.
 @Entity
 @Table(name = "commandes_clients")
 @Getter
@@ -67,6 +68,7 @@ public class CommandeClient extends BaseEntity {
     @JsonIgnore
     private Utilisateur traitePar;
 
+    // Permet de recalculer les montants HT, TVA et TTC à partir des lignes de commande.
     public void calculerMontants() {
         if (lignes != null) {
             lignes.forEach(LigneCommandeClient::calculerMontantLigneHT);
@@ -81,6 +83,7 @@ public class CommandeClient extends BaseEntity {
     }
 
     @PostLoad
+    // Permet d’assurer que les montants ne sont jamais nuls lorsqu’ils sont chargés depuis la base.
     private void normaliserMontantsApresChargement() {
         if (montantHT == null) {
             montantHT = BigDecimal.ZERO;
@@ -96,14 +99,17 @@ public class CommandeClient extends BaseEntity {
         }
     }
 
+    // Permet de vérifier si la commande peut encore être modifiée avant confirmation.
     public boolean peutEtreModifiee() {
         return this.statut == StatutCommande.BROUILLON;
     }
 
+    // Permet de vérifier si la commande peut être annulée avant ou pendant son traitement.
     public boolean peutEtreAnnulee() {
         return this.statut == StatutCommande.BROUILLON || this.statut == StatutCommande.CONFIRMEE;
     }
 
+    // Permet de vérifier si la commande peut passer au statut confirmé avec des lignes valides.
     public boolean peutEtreConfirmee() {
         return this.statut == StatutCommande.BROUILLON && lignes != null && !lignes.isEmpty();
     }

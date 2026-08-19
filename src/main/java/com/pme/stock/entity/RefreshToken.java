@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.Instant;
 
+// Représente un jeton de rafraîchissement utilisé pour renouveler une session JWT.
 @Entity
 @Table(name = "refresh_tokens")
 @Getter
@@ -28,6 +29,7 @@ public class RefreshToken {
     @JoinColumn(name = "utilisateur_id", nullable = false)
     private Utilisateur utilisateur;
 
+    // Permet de vérifier si le jeton a expiré et doit être invalidé.
     public boolean isExpire() {
         return Instant.now().isAfter(this.expiryDate);
     }

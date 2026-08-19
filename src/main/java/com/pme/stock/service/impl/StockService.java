@@ -27,6 +27,7 @@ public class StockService {
     private final UtilisateurRepository utilisateurRepository;
 
     @Transactional
+    // Permet de traiter effectuerMouvement.
     public MouvementStock effectuerMouvement(MouvementStockRequest request) {
         Produit produit = produitRepository.findById(request.getProduitId())
                 .orElseThrow(() -> new ResourceNotFoundException("Produit", request.getProduitId()));
@@ -70,6 +71,7 @@ public class StockService {
     }
 
     @Transactional(readOnly = true)
+    // Permet de traiter listerMouvementsProduit.
     public Page<MouvementStock> listerMouvementsProduit(Long produitId, Pageable pageable) {
         if (!produitRepository.existsById(produitId)) {
             throw new ResourceNotFoundException("Produit", produitId);

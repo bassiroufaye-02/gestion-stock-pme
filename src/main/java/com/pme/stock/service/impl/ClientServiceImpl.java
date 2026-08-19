@@ -25,6 +25,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
+    // Permet de cr?er creer.
     public ClientResponse creer(ClientRequest request) {
         // Vérifier l'unicité du code
         if (clientRepository.existsByCode(request.getCode())) {
@@ -43,6 +44,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public ClientResponse trouverParId(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + id));
@@ -51,18 +53,21 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerActifs.
     public Page<ClientResponse> listerActifs(Pageable pageable) {
         return clientRepository.findAllActif(pageable).map(clientMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercher.
     public Page<ClientResponse> rechercher(String search, Pageable pageable) {
         return clientRepository.rechercher(search, pageable).map(clientMapper::toResponse);
     }
 
     @Override
     @Transactional
+    // Permet de modifier modifier.
     public ClientResponse modifier(Long id, ClientRequest request) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + id));
@@ -84,6 +89,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
+    // Permet de supprimer desactiver.
     public void desactiver(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + id));
@@ -94,18 +100,21 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerTous.
     public Page<ClientResponse> listerTous(Pageable pageable) {
         return clientRepository.findAllIncludingInactifs(pageable).map(clientMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercherTous.
     public Page<ClientResponse> rechercherTous(String search, Pageable pageable) {
         return clientRepository.rechercherIncluantInactifs(search, pageable).map(clientMapper::toResponse);
     }
 
     @Override
     @Transactional
+    // Permet de traiter reactiver.
     public ClientResponse reactiver(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + id));
@@ -113,6 +122,7 @@ public class ClientServiceImpl implements ClientService {
         return clientMapper.toResponse(clientRepository.save(client));
     }
 
+    // Permet de traiter mapToEntity.
     private void mapToEntity(ClientRequest request, Client client) {
         client.setCode(request.getCode());
         client.setRaisonSociale(request.getRaisonSociale());

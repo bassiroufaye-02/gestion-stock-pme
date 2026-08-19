@@ -38,6 +38,7 @@ public class CommandeClientController {
 
     private final CommandeClientService commandeClientService;
 
+    // Permet de créer une commande client et d'enregistrer immédiatement les lignes/quantités demandées.
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Créer une nouvelle commande")
@@ -57,6 +58,7 @@ public class CommandeClientController {
         return ResponseEntity.created(location).body(commande);
     }
 
+    // Permet de récupérer une commande précise pour vérifier les articles, le statut et le montant.
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Récupérer une commande par son ID")
@@ -71,6 +73,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(commandeClientService.trouverParId(id));
     }
 
+    // Permet de lister les commandes avec pagination pour éviter une réponse trop lourde.
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister toutes les commandes")
@@ -86,6 +89,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(PageResponse.from(commandeClientService.listerToutes(safePageable)));
     }
 
+    // Permet d'afficher toutes les commandes d'un client donné pour suivre son activité commerciale.
     @GetMapping(value = "/client/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister les commandes d'un client")
@@ -102,6 +106,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(PageResponse.from(commandeClientService.listerParClient(clientId, safePageable)));
     }
 
+    // Permet de filtrer les commandes selon leur statut pour suivre l'avancement du traitement.
     @GetMapping(value = "/statut/{statut}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Lister les commandes par statut")
@@ -116,6 +121,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(PageResponse.from(commandeClientService.listerParStatut(statut, safePageable)));
     }
 
+    // Permet de retrouver une commande à partir de son numéro, très utile en support ou en contrôle.
     @GetMapping(value = "/numero/{numero}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Rechercher une commande par numéro")
@@ -130,6 +136,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(commandeClientService.rechercherParNumero(numero));
     }
 
+    // Permet de valider une commande et de passer son statut vers l'étape suivante du processus.
     @PostMapping(value = "/{id}/confirmer", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Confirmer une commande")
@@ -137,6 +144,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(commandeClientService.confirmer(id));
     }
 
+    // Permet de modifier le statut d'une commande selon l'évolution du traitement ou de la livraison.
     @PutMapping(value = "/{id}/statut", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Changer le statut d'une commande")
@@ -146,6 +154,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(commandeClientService.changerStatut(id, nouveauStatut));
     }
 
+    // Permet d'ajouter un article à une commande existante sans devoir recréer la commande entière.
     @PostMapping(value = "/{id}/lignes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Ajouter une ligne à la commande")
@@ -155,6 +164,7 @@ public class CommandeClientController {
         return ResponseEntity.ok(commandeClientService.ajouterLigne(id, request));
     }
 
+    // Permet de retirer une ligne d'une commande pour corriger la commande ou la quantité demandée.
     @DeleteMapping(value = "/{id}/lignes/{ligneId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
     @Operation(summary = "Supprimer une ligne d'une commande")

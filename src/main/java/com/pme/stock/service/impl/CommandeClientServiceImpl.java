@@ -35,6 +35,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional
+    // Permet de cr?er creer.
     public CommandeClientResponse creer(CommandeClientRequest request) {
         Client client = clientRepository.findById(request.getClientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'id: " + request.getClientId()));
@@ -77,6 +78,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional
+    // Permet de traiter confirmer.
     public CommandeClientResponse confirmer(Long id) {
         CommandeClient commande = commandeClientRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec l'id: " + id));
@@ -118,6 +120,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional
+    // Permet de traiter changerStatut.
     public CommandeClientResponse changerStatut(Long id, StatutCommande nouveauStatut) {
         CommandeClient commande = commandeClientRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec l'id: " + id));
@@ -156,6 +159,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional
+    // Permet de cr?er ajouterLigne.
     public CommandeClientResponse ajouterLigne(Long commandeId, LigneCommandeRequest request) {
         CommandeClient commande = commandeClientRepository.findByIdWithRelations(commandeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec l'id: " + commandeId));
@@ -187,6 +191,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional
+    // Permet de supprimer supprimerLigne.
     public CommandeClientResponse supprimerLigne(Long commandeId, Long ligneId) {
         CommandeClient commande = commandeClientRepository.findByIdWithRelations(commandeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec l'id: " + commandeId));
@@ -209,6 +214,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter trouverParId.
     public CommandeClientResponse trouverParId(Long id) {
         CommandeClient commande = commandeClientRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec l'id: " + id));
@@ -217,6 +223,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerParClient.
     public Page<CommandeClientResponse> listerParClient(Long clientId, Pageable pageable) {
         if (!clientRepository.existsById(clientId)) {
             throw new ResourceNotFoundException("Client non trouvé avec l'id: " + clientId);
@@ -226,24 +233,28 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerParStatut.
     public Page<CommandeClientResponse> listerParStatut(StatutCommande statut, Pageable pageable) {
         return commandeClientRepository.findByStatutWithClient(statut, pageable).map(commandeClientMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter listerToutes.
     public Page<CommandeClientResponse> listerToutes(Pageable pageable) {
         return commandeClientRepository.findAllWithClient(pageable).map(commandeClientMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
+    // Permet de traiter rechercherParNumero.
     public CommandeClientResponse rechercherParNumero(String numero) {
         CommandeClient commande = commandeClientRepository.findByNumeroCommandeWithRelations(numero)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée avec le numéro: " + numero));
         return commandeClientMapper.toResponse(commande);
     }
 
+    // Permet de g?n?rer genererNumeroCommande.
     private String genererNumeroCommande() {
         YearMonth yearMonth = YearMonth.now();
         String prefixe = "CMD-" + yearMonth.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM")) + "-";
@@ -254,6 +265,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
         return prefixe + String.format("%04d", nextSeq);
     }
 
+    // Permet de traiter estTransitionValide.
     private boolean estTransitionValide(StatutCommande ancien, StatutCommande nouveau) {
         return switch (ancien) {
             case BROUILLON -> nouveau == StatutCommande.CONFIRMEE || nouveau == StatutCommande.ANNULEE;

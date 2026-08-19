@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// Représente un article commercialisé avec son stock, son prix et sa catégorie.
 @Entity
 @Table(name = "produits")
 @Getter
@@ -67,19 +68,23 @@ public class Produit extends BaseEntity {
 
     // === Méthodes métier ===
 
+    // Permet de vérifier si le stock est proche du seuil d'alerte pour anticiper la rupture.
     public boolean isEnRuptureAlerte() {
         return this.quantiteStock <= this.seuilAlerte;
     }
 
+    // Permet de vérifier si le produit est totalement en rupture de stock.
     public boolean isEnRupture() {
         return this.quantiteStock == 0;
     }
 
+    // Permet d'ajouter des unités au stock après une réception ou un ajustement positif.
     public void incrementerStock(int quantite) {
         if (quantite <= 0) throw new IllegalArgumentException("La quantité doit être positive");
         this.quantiteStock += quantite;
     }
 
+    // Permet de retirer des unités du stock en contrôlant qu'il y ait suffisamment de disponibilité.
     public void decrementerStock(int quantite) {
         if (quantite <= 0) throw new IllegalArgumentException("La quantité doit être positive");
         if (this.quantiteStock < quantite) throw new IllegalStateException("Stock insuffisant : disponible=" + this.quantiteStock + ", demandé=" + quantite);
